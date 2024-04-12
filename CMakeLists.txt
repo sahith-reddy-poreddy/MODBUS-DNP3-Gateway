@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.22)
+project(Gate_way)
+add_executable(Gate_way ./main.cpp)
+target_link_libraries (Gate_way PRIVATE opendnp3 modbus)
+install(TARGETS Gate_way RUNTIME DESTINATION bin)
