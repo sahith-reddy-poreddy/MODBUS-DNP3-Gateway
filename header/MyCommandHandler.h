@@ -11,6 +11,8 @@
 #include <opendnp3/outstation/ICommandHandler.h>
 #include <iostream>
 #include <unordered_map>
+#include <IDataBaseHandler.h>
+
 
 using namespace std;
 
@@ -22,7 +24,7 @@ public:
 
     modbus_t *slv;        
 
-    unordered_map<int, int> mapping;
+    DataMap mapping;
 
     virtual void Begin() override;
 
