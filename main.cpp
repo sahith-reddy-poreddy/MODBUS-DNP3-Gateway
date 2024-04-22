@@ -48,19 +48,29 @@ void Read_Modbus(modbus_t* slv,DataMap& Map,IOutstation& outstation){
 
 int main(int argc, char *argv[])
 {
-    if (argc != 2)
+    if (argc < 2)
     {
-        cout << "input modbus server ip\n";
+        cout << "no input given\n";
         return 0;
-    }
-    char *ip = argv[1];                                        // ip of modbus server
-    int port = 502;                                            // port of modbus server
+    }                                           // port of modbus server
     const auto logLevels = levels::NORMAL | levels::ALL_COMMS; // logging for DNP3 server
     DNP3Manager manager(1, ConsoleLogger::Create());
     auto channel = std::shared_ptr<IChannel>(nullptr);
     channel = manager.AddTCPServer("server", logLevels, ServerAcceptMode::CloseExisting, IPEndpoint("0.0.0.0", 20000), PrintingChannelListener::Create()); // TCP server instantiation
-    auto myCommandHandler = std::make_shared<MyCommandHandler>();                                                                                   // command handler instantiation
-    myCommandHandler->slv = modbus_new_tcp(ip, port);                                                                                                      // modbus client instantiation
+    auto myCommandHandler = std::make_shared<MyCommandHandler>(); 
+    if(argv[1]=="tcp"){
+        char *ip = argv[2];                                        // ip of modbus server
+        int port = 502; 
+        myCommandHandler->slv = modbus_new_tcp(ip, port);
+    }
+    else if(argv[1]=="rtu"){
+        char* addr= argv[2];
+        myCommandHandler->slv=modbus_new_rtu(addr,9600,'N',8,1);
+    }   
+    else {
+        cout<<"invalid input"<<endl;
+        return 0;
+    }                                                                               // command handler instantiation                                                                                                // modbus client instantiation
     if (myCommandHandler->slv == NULL)
     {
         std::cerr << "Failed to create Modbus context  " << modbus_strerror(errno) << std::endl;
@@ -72,6 +82,8 @@ int main(int argc, char *argv[])
         modbus_free(myCommandHandler->slv);
         return -1;
     }
+    int slv_id=stoi(argv[3]);
+    modbus_set_slave(myCommandHandler->slv,slv_id);
     DatabaseConfig database=myCommandHandler->mapping.ReadFile("mapping_file.txt");
 
     OutstationStackConfig config(database); // DNP# server database
