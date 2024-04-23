@@ -57,13 +57,13 @@ int main(int argc, char *argv[])
     DNP3Manager manager(1, ConsoleLogger::Create());
     auto channel = std::shared_ptr<IChannel>(nullptr);
     channel = manager.AddTCPServer("server", logLevels, ServerAcceptMode::CloseExisting, IPEndpoint("0.0.0.0", 20000), PrintingChannelListener::Create()); // TCP server instantiation
-    auto myCommandHandler = std::make_shared<MyCommandHandler>(); 
-    if(argv[1]=="tcp"){
+    auto myCommandHandler = std::make_shared<MyCommandHandler>();
+    if(string(argv[1])=="tcp"){
         char *ip = argv[2];                                        // ip of modbus server
         int port = 502; 
         myCommandHandler->slv = modbus_new_tcp(ip, port);
     }
-    else if(argv[1]=="rtu"){
+    else if(string(argv[1])=="rtu"){
         char* addr= argv[2];
         myCommandHandler->slv=modbus_new_rtu(addr,9600,'N',8,1);
     }   

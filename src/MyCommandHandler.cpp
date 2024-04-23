@@ -16,7 +16,7 @@ CommandStatus MyCommandHandler::Select(const opendnp3::ControlRelayOutputBlock &
     if(this->mapping.B_O.find(index)==this->mapping.B_O.end()){
         return CommandStatus::NOT_SUPPORTED;
     }
-    else if(command.opType!=OperationType::LATCH_ON||command.opType!=OperationType::LATCH_OFF){
+    else if(command.opType!=OperationType::LATCH_ON&&command.opType!=OperationType::LATCH_OFF){
         return CommandStatus::NOT_SUPPORTED;
     }
     else return CommandStatus::SUCCESS;
